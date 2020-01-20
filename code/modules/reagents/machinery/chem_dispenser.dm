@@ -341,6 +341,8 @@ USE THIS CHEMISTRY DISPENSER FOR MAPS SO THEY START AT 100 ENERGY
 			overlay = image('icons/obj/chemical.dmi', src, "dispenser_overlay_bluesp")
 		else if(istype(container, /obj/item/weapon/reagent_containers/food/drinks/soda_cans))
 			overlay = image('icons/obj/chemical.dmi', src, "dispenser_overlay_soda")
+		else if(istype(container, /obj/item/weapon/reagent_containers/food/drinks/pitchmug))
+			overlay = image('icons/obj/chemical.dmi', src, "dispenser_overlay_pitchmug")
 		else
 			overlay = image('icons/obj/chemical.dmi', src, "dispenser_overlay_glassb")
 

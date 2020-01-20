@@ -443,6 +443,18 @@
 	vending_cat = "Vox hydroponics"
 	hydroflags = HYDRO_VOX
 
+/obj/item/seeds/pitchmug
+	name = "tissue culture of drinking pitchers"
+	seed_type = "pitchmug"
+	vending_cat = "Vox hydroponics"
+	hydroflags = HYDRO_VOX
+
+/obj/item/seeds/pitchergiant
+	name = "tissue culture of a giant pitcher"
+	seed_type = "pitchergiant"
+	vending_cat = "Vox hydroponics"
+	hydroflags = HYDRO_VOX
+
 /obj/item/seeds/aloe
 	name = "packet of aloe vera seeds"
 	seed_type = "aloe"
@@ -1734,6 +1746,7 @@
 	display_name = "pitcher plant" //because these are juicy 2, they automatically get renamed "slippery pitcher"
 	plant_dmi = 'icons/obj/hydroponics/pitcher.dmi'
 	products = list(/obj/item/weapon/reagent_containers/food/snacks/grown/pitcher)
+	mutants = list("pitchmug")
 	chems = list(FORMIC_ACID = list(1,25))
 
 	potency = 10
@@ -1748,6 +1761,43 @@
 	endurance = 25 //Fragile...
 	carnivorous = 1 //Eats pests!
 	juicy = 2 //And here's where the slipperiness comes in
+
+/datum/seed/pitchmug
+	name = "pitchmug"
+	seed_name = "drinking pitcher"
+	display_name = "drinking pitcher plant"
+	plant_dmi = 'icons/obj/hydroponics/pitchmug.dmi'
+	products = list(/obj/item/weapon/reagent_containers/food/drinks/pitchmug)
+	mutants = list("pitchergiant")
+
+	potency = 25
+	lifespan = 50
+	yield = 3
+	growth_stages = 3
+	maturation = 12
+	production = 1
+	water_consumption = 6
+	ideal_heat = 310
+	pest_tolerance = 10
+	carnivorous = 1
+
+/datum/seed/pitchergiant
+	name = "pitchergiant"
+	seed_name = "pitchergiant"
+	display_name = "giant pitcher plant"
+	plant_dmi = 'icons/obj/hydroponics/pitchergiant.dmi'
+	products = list(/obj/structure/reagent_dispensers/cauldron/pitchergiant)
+
+	potency = 25
+	lifespan = 75
+	yield = 1
+	growth_stages = 3
+	maturation = 6
+	production = 1
+	water_consumption = 6
+	ideal_heat = 310
+	pest_tolerance = 10
+	carnivorous = 1
 
 /datum/seed/aloe
 	name = "aloe"

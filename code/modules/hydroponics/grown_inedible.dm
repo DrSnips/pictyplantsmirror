@@ -291,3 +291,105 @@
 		M.drop_item(M.get_active_hand(), force_drop = 1)
 		M.put_in_hands(src)
 		to_chat(M, "<span class = 'userwarning'>\The [src] has been forced onto you by \the [user]! Find somebody else to give it to before it consumes your head!</span>")
+
+//snowflake code to make these growable reagent containers work properly ===========================================
+/obj/item/weapon/reagent_containers/food/drinks/pitchmug
+	name = "pitcher mug"
+	desc = "An organically grown, pitcher plant-based mug."
+	icon = 'icons/obj/hydroponics/pitchmug.dmi'
+	icon_state = "produce"
+	//opaque = TRUE
+	var/plantname
+	var/potency = -1
+	var/hydroflags = 0
+	var/datum/seed/seed
+	var/fragrance
+
+//code copied from code/modules/reagents/reagent_containers/food/snacks/grown.dm as this item is meant to be a child
+//of drink containers so that it can be properly slotted into machines such as chem dispensers and cryotubes, while
+//still functioning like a plant product should
+/obj/item/weapon/reagent_containers/food/drinks/pitchmug/New()
+	..()
+	if(ticker)
+		initialize()
+
+/obj/item/weapon/reagent_containers/food/drinks/pitchmug/initialize()
+	//Handle some post-spawn var stuff.
+	spawn()
+		//Fill the object up with the appropriate reagents.
+		if(!isnull(plantname))
+			seed = SSplant.seeds[plantname]
+			if(!seed)
+				return
+			icon = seed.plant_dmi
+			potency = round(seed.potency)
+			volume = potency*2
+			reagents.maximum_volume = volume
+			force = seed.thorny ? 5+seed.carnivorous*3 : 0
+			throwforce = seed.thorny ? 5+seed.carnivorous*3 : 0
+
+			if(seed.teleporting)
+				name = "blue-space [name]"
+			if(seed.stinging)
+				name = "stinging [name]"
+			if(seed.juicy == 2)
+				name = "slippery [name]"
+
+			if(!seed.chems)
+				return
+
+			var/totalreagents = 0
+			for(var/rid in seed.chems)
+				var/list/reagent_data = seed.chems[rid]
+				var/rtotal = reagent_data[1]
+				if(reagent_data.len > 1 && potency > 0)
+					rtotal += round(potency/reagent_data[2])
+				totalreagents += rtotal
+
+			if(totalreagents)
+				var/coeff = min(reagents.maximum_volume / totalreagents, 1)
+				for(var/rid in seed.chems)
+					var/list/reagent_data = seed.chems[rid]
+					var/rtotal = reagent_data[1]
+					if(reagent_data.len > 1 && potency > 0)
+						rtotal += round(potency/reagent_data[2])
+					reagents.add_reagent(rid, max(0.1, round(rtotal*coeff, 0.1)))
+
+	src.pixel_x = rand(-5, 5) * PIXEL_MULTIPLIER
+	src.pixel_y = rand(-5, 5) * PIXEL_MULTIPLIER
+
+/obj/item/weapon/reagent_containers/food/drinks/pitchmug/update_icon()
+    overlays.len = 0
+
+    if(reagents.total_volume)
+        var/image/filling = image('icons/obj/reagentfillings.dmi', src, "pitchmug")
+
+        filling.icon += mix_color_from_reagents(reagents.reagent_list)
+        filling.alpha = mix_alpha_from_reagents(reagents.reagent_list)
+
+        overlays += filling
+
+/obj/item/weapon/reagent_containers/food/drinks/pitchmug/on_reagent_change()
+    update_icon()
+
+/obj/structure/reagent_dispensers/cauldron/pitchergiant
+	name = "giant pitcher"
+	desc = "All natural, biodegradable cauldron alternative."
+	icon = 'icons/obj/hydroponics/pitchergiant.dmi'
+	icon_state = "produce"
+
+/obj/structure/reagent_dispensers/cauldron/pitchergiant/update_icon()
+    overlays.len = 0
+
+    if(reagents.total_volume)
+        var/image/filling = image('icons/obj/reagentfillings.dmi', src, "cauldron")
+
+        filling.icon += mix_color_from_reagents(reagents.reagent_list)
+        filling.alpha = mix_alpha_from_reagents(reagents.reagent_list)
+
+        overlays += filling
+
+/obj/structure/reagent_dispensers/cauldron/pitchergiant/on_reagent_change()
+    update_icon()
+
+//end of snowflake containers ======================================================================================
